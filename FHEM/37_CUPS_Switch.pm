@@ -23,7 +23,6 @@ sub CUPS_Switch_Initialize($) {
   $hash->{UndefFn}    = "CUPS_Switch_Undefine";
   $hash->{GetFn}    	= "CUPS_Switch_Get";
 	$hash->{AttrFn}     = "CUPS_Switch_Attr";
-	$hash->{NOTIFYDEV}  = "global";
 	
   $hash->{AttrList}   = "disable:1,0 ".		
 												"do_not_notify:1,0 ".
@@ -60,6 +59,7 @@ sub CUPS_Switch_Define($$) {
 	$hash->{"OFFCMD"} = $offCmd;
 	
 	$hash->{VERSION}=$version;
+	$hash->{NOTIFYDEV}  = "global";
 	
 	delete $hash->{TIMEOUT} if ($hash->{TIMEOUT});
 	delete $hash->{TIMEOUTOFF} if ($hash->{TIMEOUTOFF});
