@@ -1,10 +1,18 @@
-# $Id: 98_CUPS_Switch.pm 3200 Version 1.0 2016-05-27 17:05:10Z marvin1978 $
+# $Id: 98_CUPS_Switch.pm  $
 
 package main;
 
 use strict;
 use warnings;
 use Blocking;
+
+#######################
+# Global variables
+my $version = "1.0.1";
+
+my %gets = (
+  "version:noArg"     => "",
+); 
 
 
 sub CUPS_Switch_Initialize($) { 
@@ -13,6 +21,7 @@ sub CUPS_Switch_Initialize($) {
   $hash->{DefFn}      = "CUPS_Switch_Define";
   $hash->{NotifyFn}   = "CUPS_Switch_Notify";
   $hash->{UndefFn}    = "CUPS_Switch_Undefine";
+  $hash->{GetFn}    	= "CUPS_Switch_Get";
 	$hash->{AttrFn}     = "CUPS_Switch_Attr";
 	$hash->{NOTIFYDEV}  = "global";
 	
@@ -20,8 +29,6 @@ sub CUPS_Switch_Initialize($) {
 												"do_not_notify:1,0 ".
 												"pollInterval ".
 												"switchOffTime ".
-												#"switchScript ".
-												#"switchScriptTimeout ".
 											  $readingFnAttributes;
 	
 	return undef;
@@ -51,6 +58,8 @@ sub CUPS_Switch_Define($$) {
 	$hash->{"PORT"} = $a[5] ? $a[5] : "631";
 	$hash->{"ONCMD"} = $onCmd;
 	$hash->{"OFFCMD"} = $offCmd;
+	
+	$hash->{VERSION}=$version;
 	
 	delete $hash->{TIMEOUT} if ($hash->{TIMEOUT});
 	delete $hash->{TIMEOUTOFF} if ($hash->{TIMEOUTOFF});
@@ -153,6 +162,21 @@ sub CUPS_Switch_Notify ($$) {
 
   return undef;
 
+}
+
+sub CUPS_Switch_Get($@) {
+  my ($hash, $name, $cmd, @args) = @_;
+  my $ret = undef;
+  
+  if ( $cmd eq "version") {
+  	$hash->{VERSION} = $version;
+    return "Version: ".$version;
+  }
+  else {
+    $ret ="$name get with unknown argument $cmd, choose one of " . join(" ", sort keys %gets);
+  }
+ 
+  return $ret;
 }
 
 sub CUPS_Switch_StartGetSpool ($) {
